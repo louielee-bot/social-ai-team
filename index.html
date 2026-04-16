@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Agency IQ — AI Social Media Team</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080e;--s1:#0f0f18;--s2:#16161f;--s3:#1e1e2a;--border:#ffffff12;--border2:#ffffff1e;--text:#f2f2f8;--sub:#9090b8;--dim:#55557a;--gold:#f5c842;--gold2:#ff9f43;--mint:#00e5a0;--coral:#ff5e7e;--sky:#38c5ff;--violet:#9b6fff;--r:18px;--rsm:10px;--ease:cubic-bezier(0.22,1,0.36,1)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Instrument Sans',sans-serif;background:var(--bg);color:var(--text);font-size:15px}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.35}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;animation:drift 14s ease-in-out infinite alternate}
+.orb.a{width:500px;height:500px;background:radial-gradient(circle,#9b6fff14,transparent 70%);top:-150px;left:-150px}
+.orb.b{width:400px;height:400px;background:radial-gradient(circle,#f5c84210,transparent 70%);bottom:-100px;right:-100px;animation-delay:-7s}
+@keyframes drift{to{transform:translate(40px,30px) scale(1.1)}}
+
+/* SCREENS */
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;opacity:0;pointer-events:none;transform:translateY(18px);transition:opacity .4s var(--ease),transform .4s var(--ease);z-index:1}
+.screen.active{opacity:1;pointer-events:all;transform:translateY(0)}
+.screen.exit{opacity:0;transform:translateY(-16px);transition:opacity .25s var(--ease),transform .25s var(--ease)}
+
+/* STEP BAR */
+.stepbar{display:flex;align-items:center;justify-content:center;gap:8px;padding:18px 0 0;flex-shrink:0}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--s3);border:1px solid var(--border2);transition:all .35s var(--ease)}
+.sdot.done{background:var(--mint);border-color:var(--mint)}
+.sdot.active{width:26px;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold2));border-color:transparent}
+.steplabel{text-align:center;font-size:.62rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-top:8px;padding-bottom:2px;flex-shrink:0}
+
+/* SCROLL WRAP */
+.owrap{flex:1;overflow-y:auto;padding:0 18px 48px;display:flex;flex-direction:column;align-items:center}
+.owrap::-webkit-scrollbar{display:none}
+
+/* TYPOGRAPHY */
+.wordmark{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.45rem;letter-spacing:-.03em;background:linear-gradient(135deg,var(--gold),var(--gold2),var(--coral));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;padding-top:24px;flex-shrink:0}
+.headline{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.65rem;line-height:1.18;letter-spacing:-.04em;text-align:center;margin:22px 0 8px}
+.headline em{font-style:normal;background:linear-gradient(90deg,var(--gold),var(--coral));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subhead{text-align:center;color:var(--sub);font-size:.88rem;line-height:1.65;margin-bottom:28px;max-width:340px}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:20px 18px;width:100%;max-width:440px;margin-bottom:14px}
+.card-label{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-label span{background:var(--s3);border:1px solid var(--border);border-radius:6px;padding:2px 8px;font-size:.6rem;color:var(--sub)}
+
+/* INPUTS */
+label{display:block;font-size:.7rem;color:var(--sub);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+.iw{position:relative;margin-bottom:13px}
+.iw .pfx{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:.85rem;color:var(--dim);pointer-events:none}
+input,textarea,select{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rsm);color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:.9rem;padding:11px 13px;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
+.pfxd input{padding-left:35px}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #f5c84212}
+input::placeholder,textarea::placeholder{color:var(--dim)}
+textarea{resize:none;min-height:68px;line-height:1.6}
+select option{background:var(--s2)}
+
+/* BUTTONS */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:var(--rsm);padding:14px 20px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.92rem;cursor:pointer;transition:opacity .2s,transform .15s;width:100%;letter-spacing:-.01em}
+.btn:active{transform:scale(0.97);opacity:.88}
+.btn:disabled{opacity:.38;pointer-events:none}
+.btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0800}
+.btn.ghost{background:var(--s2);border:1px solid var(--border2);color:var(--sub)}
+.btn.success{background:linear-gradient(135deg,var(--mint),#00c787);color:#00150d}
+.maxw{max-width:440px;width:100%}
+
+/* ANALYZE SCREEN */
+#sa{justify-content:center;align-items:center}
+.aring{width:80px;height:80px;border-radius:50%;border:2px solid var(--border2);border-top-color:var(--gold);animation:spin 1s linear infinite;margin-bottom:28px;position:relative;flex-shrink:0}
+.aring::after{content:'🔍';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;animation:spin 1s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.asteps{display:flex;flex-direction:column;gap:9px;width:100%;max-width:340px}
+.astep{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:12px;background:var(--s1);border:1px solid var(--border);font-size:.83rem;color:var(--dim);transition:all .5s var(--ease)}
+.astep.active{color:var(--text);border-color:var(--border2)}
+.astep.done{color:var(--mint);border-color:#00e5a020;background:#00e5a008}
+.astep .d{width:7px;height:7px;border-radius:50%;background:var(--s3);flex-shrink:0;transition:background .3s}
+.astep.active .d{background:var(--gold);box-shadow:0 0 8px #f5c84260}
+.astep.done .d{background:var(--mint)}
+
+/* CONFIRM */
+.ctag{display:inline-flex;align-items:center;gap:5px;background:#00e5a012;border:1px solid #00e5a028;border-radius:20px;padding:4px 12px;font-size:.7rem;color:var(--mint);font-family:'Bricolage Grotesque',sans-serif;font-weight:600;margin-bottom:18px}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:4px}
+.iblock{background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:12px}
+.iblock .ik{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-bottom:5px}
+.iblock .iv{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.82rem;line-height:1.3}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);background:var(--s1);flex-shrink:0;z-index:10}
+.tlogo{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.98rem;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tbrand{font-size:.7rem;color:var(--sub);background:var(--s2);border:1px solid var(--border2);padding:4px 10px;border-radius:20px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ibtn{background:none;border:none;color:var(--sub);font-size:1.05rem;cursor:pointer;padding:6px;border-radius:8px;transition:background .18s}
+.ibtn:hover{background:var(--s2)}
+.ibtnrow{display:flex;gap:4px}
+
+/* MAIN SCROLL */
+.mscroll{flex:1;overflow-y:auto;padding:14px}
+.mscroll::-webkit-scrollbar{display:none}
+
+/* INTEL PANEL */
+.intel{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:16px;margin-bottom:16px;position:relative;overflow:hidden}
+.intel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--coral))}
+.intel-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.75rem;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.intel-sub{color:var(--dim);font-size:.62rem;font-family:'Instrument Sans',sans-serif;font-weight:400;text-transform:none;letter-spacing:0}
+.igridm{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ii{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px 11px}
+.iik{font-size:.6rem;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-bottom:3px}
+.iiv{font-family:'Bricolage Grotesque',sans-serif;font-size:.8rem;font-weight:700;line-height:1.3}
+
+/* PLATFORM RAIL */
+.prail{display:flex;gap:8px;overflow-x:auto;padding:0 0 13px;scrollbar-width:none;flex-shrink:0}
+.prail::-webkit-scrollbar{display:none}
+.ptab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 11px;border-radius:14px;cursor:pointer;border:1px solid var(--border);background:var(--s1);min-width:62px;transition:all .25s var(--ease);flex-shrink:0}
+.ptab.active{border-color:var(--pc,var(--gold));background:var(--s2);box-shadow:0 0 18px var(--pg,#f5c84218)}
+.ptab-icon{font-size:1.2rem;line-height:1}
+.ptab-name{font-size:.58rem;color:var(--sub);font-weight:500;white-space:nowrap}
+.ptab.active .ptab-name{color:var(--text)}
+.health{width:5px;height:5px;border-radius:50%;background:var(--dim)}
+.health.strong{background:#22c55e}
+.health.weak{background:var(--coral)}
+.health.opp{background:var(--gold)}
+
+/* SECTION LABEL */
+.slabel{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:11px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700}
+
+/* SPECIALIST CARDS */
+.specgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.scard{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:15px;cursor:pointer;transition:all .22s var(--ease);position:relative;overflow:hidden}
+.scard::after{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,var(--pc,#f5c842)06,transparent);opacity:0;transition:opacity .22s}
+.scard:hover{border-color:var(--pc,var(--gold));transform:translateY(-2px);box-shadow:0 8px 28px #00000050}
+.scard:hover::after{opacity:1}
+.scard:active{transform:scale(0.96)}
+.semoji{font-size:1.4rem;margin-bottom:7px;display:block}
+.sname{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.8rem;margin-bottom:3px}
+.sdesc{font-size:.66rem;color:var(--sub);line-height:1.4}
+.sarr{position:absolute;top:13px;right:13px;color:var(--dim);font-size:.78rem;transition:transform .2s,color .2s}
+.scard:hover .sarr{transform:translate(2px,-2px);color:var(--pc,var(--gold))}
+
+/* IMPROVE PANEL */
+.imppanel{background:var(--s1);border:1px solid #00e5a018;border-radius:var(--r);padding:15px;margin-bottom:16px}
+.imptitle{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.76rem;color:var(--mint);margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.impbadge{background:#00e5a012;border:1px solid #00e5a028;color:var(--mint);border-radius:20px;padding:2px 8px;font-size:.58rem}
+.impitem{font-size:.77rem;color:var(--sub);padding:7px 0;border-bottom:1px solid var(--border);line-height:1.5}
+.impitem:last-child{border:none;padding-bottom:0}
+
+/* VAULT PREVIEW */
+.vaultpanel{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:18px}
+.vaulthdr{padding:13px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.vaulttitle{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.8rem}
+.vaultcnt{font-size:.65rem;color:var(--dim);background:var(--s2);padding:2px 8px;border-radius:20px;border:1px solid var(--border)}
+.vaultitem{padding:11px 15px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.vaultitem:last-child{border:none}
+.vaultitem:hover{background:var(--s2)}
+.vaultitem-title{font-size:.8rem;font-weight:500;margin-bottom:2px}
+.vaultitem-meta{font-size:.66rem;color:var(--dim)}
+
+/* CHAT */
+.chatheader{display:flex;align-items:center;gap:11px;padding:13px 16px;border-bottom:1px solid var(--border);background:var(--s1);flex-shrink:0}
+.backbtn{background:none;border:none;color:var(--text);font-size:1.15rem;cursor:pointer;padding:4px;line-height:1;border-radius:8px}
+.chavatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.chinfo{flex:1;min-width:0}
+.chname{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chsub{font-size:.66rem;color:var(--sub)}
+.qrail{display:flex;gap:7px;overflow-x:auto;padding:9px 15px 6px;scrollbar-width:none;flex-shrink:0;border-bottom:1px solid var(--border)}
+.qrail::-webkit-scrollbar{display:none}
+.qchip{background:var(--s1);border:1px solid var(--border2);color:var(--sub);border-radius:20px;padding:6px 13px;font-size:.71rem;white-space:nowrap;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .18s}
+.qchip:hover{border-color:var(--pc,var(--gold));color:var(--text)}
+.messages{flex:1;overflow-y:auto;padding:16px 15px;display:flex;flex-direction:column;gap:13px}
+.messages::-webkit-scrollbar{width:3px}
+.messages::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.msg{max-width:86%;animation:mIn .3s var(--ease) both}
+.msg.user{align-self:flex-end}
+.msg.ai{align-self:flex-start}
+@keyframes mIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.mbubble{padding:11px 15px;border-radius:18px;font-size:.87rem;line-height:1.65}
+.msg.user .mbubble{background:linear-gradient(135deg,#25194e,#18113a);border:1px solid #5030ff28;border-bottom-right-radius:4px}
+.msg.ai .mbubble{background:var(--s1);border:1px solid var(--border2);border-bottom-left-radius:4px}
+.msg.ai .mbubble strong{color:var(--gold)}
+.msg.ai .mbubble em{color:var(--mint);font-style:normal}
+.skelbubble{padding:12px 15px;background:var(--s1);border:1px solid var(--border);border-radius:18px;border-bottom-left-radius:4px}
+.skelline{height:10px;border-radius:5px;background:linear-gradient(90deg,var(--s2),var(--s3),var(--s2));background-size:200%;animation:shim 1.4s infinite;margin-bottom:7px}
+.skelline:last-child{margin:0;width:58%}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.actrow{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.actbtn{background:var(--s2);border:1px solid var(--border);color:var(--sub);border-radius:8px;padding:5px 10px;font-size:.66rem;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .18s;display:flex;align-items:center;gap:3px}
+.actbtn:hover{border-color:var(--pc,var(--gold));color:var(--text)}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--mint);color:#002a18;padding:9px 18px;border-radius:20px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.8rem;z-index:500;white-space:nowrap;animation:tin .35s var(--ease) both,tout .35s var(--ease) 2.4s both forwards}
+@keyframes tin{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes tout{to{opacity:0;transform:translateX(-50%) translateY(8px)}}
+.inputbar{padding:9px 13px;border-top:1px solid var(--border);background:var(--s1);display:flex;gap:9px;align-items:flex-end;flex-shrink:0}
+.inputbar textarea{flex:1;margin:0;min-height:41px;max-height:108px;border-radius:22px;padding:10px 15px;font-size:.87rem;resize:none;line-height:1.5}
+.sendbtn{width:41px;height:41px;min-width:41px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:50%;color:#0a0800;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s,opacity .2s;flex-shrink:0}
+.sendbtn:active{transform:scale(0.9)}
+.sendbtn:disabled{opacity:.4}
+
+/* SHEET */
+.backdrop{position:fixed;inset:0;background:#000b;z-index:100;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .3s}
+.backdrop.open{opacity:1;pointer-events:all}
+.sheet{background:var(--s1);border:1px solid var(--border2);border-radius:24px 24px 0 0;padding:26px 18px 48px;width:100%;max-height:88vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s var(--ease)}
+.backdrop.open .sheet{transform:translateY(0)}
+.shandle{width:34px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 22px}
+.sheet h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.05rem;margin-bottom:18px}
+
+/* VAULT MODAL */
+.vmodal{position:fixed;inset:0;background:#000b;z-index:100;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .3s}
+.vmodal.open{opacity:1;pointer-events:all}
+.vmodalinner{background:var(--s1);margin:auto 0 0;border-radius:24px 24px 0 0;padding:26px 18px 50px;max-height:82vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s var(--ease)}
+.vmodal.open .vmodalinner{transform:translateY(0)}
+.ventry{background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:13px 15px;margin-bottom:9px}
+.ventry-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.83rem;margin-bottom:4px;display:flex;justify-content:space-between}
+.ventry-preview{font-size:.74rem;color:var(--sub);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vempty{text-align:center;color:var(--dim);padding:38px 0;font-size:.83rem}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="orb a"></div><div class="orb b"></div>
+
+<!-- ═══ SCREEN 1: CONNECT ═══ -->
+<div class="screen active" id="sl">
+  <div class="stepbar"><div class="sdot active"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+  <div class="steplabel">Connect → Analyze → Confirm → Launch</div>
+  <div class="owrap">
+    <div class="wordmark">Agency IQ</div>
+    <h1 class="headline">Your AI team is ready.<br><em>Show us your brand.</em></h1>
+    <p class="subhead">Paste your social links. We'll study your positioning before you say a word.</p>
+    <div class="card maxw">
+      <div class="card-label">🔗 Your Social Presence <span>Paste any you have</span></div>
+      <label>Instagram</label>
+      <div class="iw pfxd"><span class="pfx">📸</span><input type="url" id="ig" placeholder="instagram.com/yourprofile"></div>
+      <label>Facebook Page</label>
+      <div class="iw pfxd"><span class="pfx">🔵</span><input type="url" id="fb" placeholder="facebook.com/yourpage"></div>
+      <label>LinkedIn</label>
+      <div class="iw pfxd"><span class="pfx">💼</span><input type="url" id="li" placeholder="linkedin.com/in/yourname"></div>
+      <label>TikTok <span style="color:var(--dim);font-size:.62rem">(optional)</span></label>
+      <div class="iw pfxd"><span class="pfx">🎵</span><input type="url" id="tt" placeholder="tiktok.com/@yourhandle"></div>
+      <label>YouTube <span style="color:var(--dim);font-size:.62rem">(optional)</span></label>
+      <div class="iw pfxd" style="margin-bottom:0"><span class="pfx">▶️</span><input type="url" id="yt" placeholder="youtube.com/@yourchannel"></div>
+    </div>
+    <div class="card maxw">
+      <div class="card-label">⚡ Power Your AI <span>Free</span></div>
+      <label>Gemini API Key</label>
+      <input type="password" id="akey" placeholder="AIzaSy…" autocomplete="off" style="margin-bottom:7px">
+      <p style="font-size:.68rem;color:var(--dim)">Free at <strong style="color:var(--sub)">aistudio.google.com</strong> → Get API key. No card needed.</p>
+    </div>
+    <div class="maxw" style="margin-bottom:8px"><button class="btn primary" onclick="go()">Analyze My Brand 🔍</button></div>
+    <p style="font-size:.68rem;color:var(--dim)">Takes about 5 seconds</p>
+  </div>
+</div>
+
+<!-- ═══ SCREEN 2: ANALYZING ═══ -->
+<div class="screen" id="sa" style="justify-content:center;align-items:center">
+  <div style="display:flex;flex-direction:column;align-items:center;padding:40px 24px;max-width:340px;text-align:center">
+    <div class="aring"></div>
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.25rem;margin-bottom:7px">Reading your brand…</h2>
+    <p style="color:var(--sub);font-size:.83rem;margin-bottom:26px;line-height:1.6">Building your strategy profile before you lift a finger.</p>
+    <div class="asteps">
+      <div class="astep" id="as1"><div class="d"></div>Scanning your social presence</div>
+      <div class="astep" id="as2"><div class="d"></div>Identifying your audience signals</div>
+      <div class="astep" id="as3"><div class="d"></div>Detecting brand tone & voice</div>
+      <div class="astep" id="as4"><div class="d"></div>Generating your strategy profile</div>
+      <div class="astep" id="as5"><div class="d"></div>Calibrating your AI team</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN 3: CONFIRM ═══ -->
+<div class="screen" id="sc">
+  <div class="stepbar"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot active"></div><div class="sdot"></div></div>
+  <div class="steplabel">Connect → Analyze → Confirm → Launch</div>
+  <div class="owrap">
+    <div class="wordmark" style="padding-top:18px">Agency IQ</div>
+    <h1 class="headline" style="font-size:1.35rem;margin:14px 0 5px">We analyzed your brand 👇</h1>
+    <p class="subhead" style="margin-bottom:18px">Edit anything — then confirm to launch your team.</p>
+    <div class="card maxw">
+      <div class="ctag">✦ Analysis Complete</div>
+      <div class="igrid" id="igrid"></div>
+    </div>
+    <div class="card maxw">
+      <div class="card-label">✏️ Verify & Edit</div>
+      <label>Brand / Business Name</label>
+      <input type="text" id="cn" placeholder="Your brand name" style="margin-bottom:13px">
+      <label>What you do</label>
+      <textarea id="cd" placeholder="1–2 sentences about your business…" style="margin-bottom:13px"></textarea>
+      <label>Target Audience</label>
+      <input type="text" id="ca" style="margin-bottom:13px">
+      <label>Brand Tone</label>
+      <select id="ct" style="margin-bottom:13px">
+        <option value="warm and friendly">Warm & Friendly</option>
+        <option value="professional and authoritative">Professional & Authoritative</option>
+        <option value="fun and playful">Fun & Playful</option>
+        <option value="inspirational and motivating">Inspirational & Motivating</option>
+        <option value="luxury and premium">Luxury & Premium</option>
+        <option value="casual and conversational">Casual & Conversational</option>
+        <option value="bold and aspirational">Bold & Aspirational</option>
+        <option value="educational and informative">Educational & Informative</option>
+        <option value="bold and edgy">Bold & Edgy</option>
+      </select>
+      <label>Primary Goal</label>
+      <select id="cg" style="margin-bottom:0">
+        <option value="grow brand awareness">Grow Brand Awareness</option>
+        <option value="drive sales and conversions">Drive Sales & Conversions</option>
+        <option value="build a community">Build a Community</option>
+        <option value="generate leads">Generate Leads</option>
+        <option value="establish thought leadership">Establish Thought Leadership</option>
+        <option value="promote events">Promote Events</option>
+      </select>
+    </div>
+    <div class="maxw"><button class="btn success" onclick="launch()">Launch My Agency Team 🚀</button></div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN 4: DASHBOARD ═══ -->
+<div class="screen" id="sm">
+  <div class="topbar">
+    <div class="tlogo">Agency IQ</div>
+    <span class="tbrand" id="tbrand">My Brand</span>
+    <div class="ibtnrow">
+      <button class="ibtn" onclick="openVault()" title="Strategy Vault">💾</button>
+      <button class="ibtn" onclick="openSettings()">⚙️</button>
+    </div>
+  </div>
+  <div class="mscroll">
+    <div class="intel">
+      <div class="intel-title">🧠 Brand Intelligence <span class="intel-sub">Live strategy profile</span></div>
+      <div class="igridm" id="igridm"></div>
+    </div>
+    <div class="prail" id="prail"></div>
+    <div class="imppanel hidden" id="imppanel">
+      <div class="imptitle">🧠 Learned From Your Analytics <span class="impbadge">Self-Improving</span></div>
+      <div id="implist"></div>
+    </div>
+    <div class="slabel" id="slabel">FACEBOOK — YOUR AI TEAM</div>
+    <div class="specgrid" id="specgrid"></div>
+    <div id="vpreview" class="hidden">
+      <div class="slabel">STRATEGY VAULT</div>
+      <div class="vaultpanel">
+        <div class="vaulthdr"><span class="vaulttitle">💾 Saved Strategies</span><span class="vaultcnt" id="vcntbadge">0</span></div>
+        <div id="vpreviewlist"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN 5: CHAT ═══ -->
+<div class="screen" id="sch">
+  <div class="chatheader">
+    <button class="backbtn" onclick="goBack()">←</button>
+    <div class="chavatar" id="chavatar"></div>
+    <div class="chinfo"><div class="chname" id="chname"></div><div class="chsub" id="chsub"></div></div>
+    <button class="ibtn" onclick="openSettings()">⚙️</button>
+  </div>
+  <div class="qrail" id="qrail"></div>
+  <div class="messages" id="messages"></div>
+  <div class="inputbar">
+    <textarea id="uinput" placeholder="Ask your specialist…" rows="1" onkeydown="hkey(event)" oninput="ar(this)"></textarea>
+    <button class="sendbtn" id="sbtn" onclick="send()">➤</button>
+  </div>
+</div>
+
+<!-- SETTINGS SHEET -->
+<div class="backdrop" id="ssheet" onclick="cso(event)">
+  <div class="sheet">
+    <div class="shandle"></div>
+    <h2>⚙️ Settings</h2>
+    <label>Gemini API Key</label><input type="password" id="ss-api" style="margin-bottom:13px">
+    <label>Brand Name</label><input type="text" id="ss-name" style="margin-bottom:13px">
+    <label>What You Do</label><textarea id="ss-desc" style="margin-bottom:13px"></textarea>
+    <label>Target Audience</label><input type="text" id="ss-aud" style="margin-bottom:13px">
+    <label>Brand Tone</label>
+    <select id="ss-tone" style="margin-bottom:13px">
+      <option value="warm and friendly">Warm & Friendly</option>
+      <option value="professional and authoritative">Professional & Authoritative</option>
+      <option value="fun and playful">Fun & Playful</option>
+      <option value="inspirational and motivating">Inspirational & Motivating</option>
+      <option value="luxury and premium">Luxury & Premium</option>
+      <option value="casual and conversational">Casual & Conversational</option>
+      <option value="bold and aspirational">Bold & Aspirational</option>
+      <option value="educational and informative">Educational & Informative</option>
+      <option value="bold and edgy">Bold & Edgy</option>
+    </select>
+    <label>Primary Goal</label>
+    <select id="ss-goal" style="margin-bottom:18px">
+      <option value="grow brand awareness">Grow Brand Awareness</option>
+      <option value="drive sales and conversions">Drive Sales & Conversions</option>
+      <option value="build a community">Build a Community</option>
+      <option value="generate leads">Generate Leads</option>
+      <option value="establish thought leadership">Establish Thought Leadership</option>
+      <option value="promote events">Promote Events</option>
+    </select>
+    <button class="btn primary" onclick="saveS()" style="margin-bottom:9px">Save Changes</button>
+    <button class="btn ghost" onclick="closeSettings()">Cancel</button>
+  </div>
+</div>
+
+<!-- VAULT MODAL -->
+<div class="vmodal" id="vmodal" onclick="cvo(event)">
+  <div class="vmodalinner">
+    <div class="shandle"></div>
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.05rem;margin-bottom:14px">💾 Strategy Vault</h2>
+    <div id="vmodallist"></div>
+    <button class="btn ghost" style="margin-top:10px" onclick="closeVault()">Close</button>
+  </div>
+</div>
+
+<script>
+// STATE
+const S={api:'',links:{ig:'',fb:'',li:'',tt:'',yt:''},brand:{name:'',desc:'',audience:'',tone:'',goal:'',bestPlatform:'',opportunity:''},platform:'facebook',spec:null,convo:[],improvements:{},vault:[],health:{}};
+
+// PLATFORMS
+const P={facebook:{l:'Facebook',i:'🔵',c:'#1877f2',g:'#1877f228'},instagram:{l:'Instagram',i:'📸',c:'#e1306c',g:'#e1306c28'},linkedin:{l:'LinkedIn',i:'💼',c:'#0a66c2',g:'#0a66c228'},youtube:{l:'YouTube',i:'▶️',c:'#ff0000',g:'#ff000028'},tiktok:{l:'TikTok',i:'🎵',c:'#2bd4d4',g:'#2bd4d428'},twitter:{l:'X/Twitter',i:'🐦',c:'#1da1f2',g:'#1da1f228'}};
+
+// SPECIALISTS
+const SPECS=[
+  {id:'strategist',name:'Brand Strategist',e:'🎯',c:'#f5c842',d:'Positioning, goals & brand identity',
+   prompts:{facebook:['Audit my Facebook page','Build my Facebook strategy','What should I stop doing?'],instagram:['Audit my Instagram','Full IG growth strategy','What content underperforms?'],linkedin:['Audit my LinkedIn','Build thought leadership plan','How do I stand out?'],youtube:['Audit my YouTube channel','Full YouTube strategy','What videos should I make?'],tiktok:['Audit my TikTok','Full TikTok strategy','How do I go viral?'],twitter:['Audit my X profile','Full X strategy','What tweet formats work?']},
+   sys:(pl,b,imp)=>`You are an elite ${pl.l} Brand Strategist — razor-sharp, direct, insight-driven.\nBRAND: "${b.name}" — ${b.desc}\nAUDIENCE: ${b.audience} | TONE: ${b.tone} | GOAL: ${b.goal}\nSOCIAL LINKS: ${JSON.stringify(S.links)}\n${imp?.length?`PERFORMANCE LEARNINGS:\n${imp.map(i=>'• '+i).join('\n')}`:''}Give brutally honest, specific ${pl.l} strategy. No fluff. Lead with insight. End with: "Biggest opportunity right now:" in one sharp sentence.`},
+  {id:'planner',name:'Content Planner',e:'📅',c:'#38c5ff',d:'Monthly calendars & content schedules',
+   prompts:{facebook:['Monthly Facebook calendar','What content pillars to use?','Best posting frequency'],instagram:['Monthly IG calendar','Story vs Feed vs Reels balance','Content pillars for my brand'],linkedin:['LinkedIn content plan','Best posting days','Content mix for professionals'],youtube:['YouTube upload schedule','Video series ideas for 90 days','Niche content calendar'],tiktok:['TikTok posting plan','7-day content plan','Trending formats for my brand'],twitter:['X/Twitter posting plan','Weekly tweet types to mix','Engagement calendar']},
+   sys:(pl,b,imp)=>`You are a ${pl.l} Content Planner — strategic, structured, output-focused.\nBRAND: "${b.name}" — ${b.desc}\nAUDIENCE: ${b.audience} | TONE: ${b.tone} | GOAL: ${b.goal}\n${imp?.length?`PERFORMANCE LEARNINGS:\n${imp.map(i=>'• '+i).join('\n')}`:''}\nBuild detailed, structured ${pl.l} content plans. Use clear layout (weeks/days). Be specific about post types, topics, timing. No generic advice.`},
+  {id:'copywriter',name:'Copywriter',e:'✍️',c:'#ff5e7e',d:'Scroll-stopping captions, hooks & hashtags',
+   prompts:{facebook:['Write 5 Facebook posts','Give me 10 viral hooks','Write a post that drives shares'],instagram:['Write 5 IG captions + hashtags','10 reel hooks','Write a sales caption'],linkedin:['Write 3 LinkedIn posts','Thought leadership piece','Create a viral LinkedIn hook'],youtube:['Write a video description','10 video title ideas','Script outline for my next video'],tiktok:['Write 5 TikTok captions','10 TikTok hooks','Script a 30-second TikTok'],twitter:['Write 10 tweets','Write a Twitter thread','Viral tweet formats for me']},
+   sys:(pl,b,imp)=>`You are an elite ${pl.l} Copywriter who writes content that stops scrolls and drives action.\nBRAND: "${b.name}" — ${b.desc}\nAUDIENCE: ${b.audience} | TONE: ${b.tone} | GOAL: ${b.goal}\n${imp?.length?`WHAT'S BEEN WORKING:\n${imp.map(i=>'• '+i).join('\n')}`:''}\nPlatform style: Facebook=conversational 100-250 words; Instagram=visual hook 80-150 words + 15-20 hashtags; LinkedIn=insight-led 150-300 words 3-5 hashtags; YouTube=SEO title+description; TikTok=ultra-casual short hook 3-5 hashtags; X=under 280 chars unless thread.\nWrite READY-TO-POST content. Label each clearly.`},
+  {id:'designer',name:'Creative Director',e:'🎨',c:'#9b6fff',d:'Visual concepts, briefs & creative direction',
+   prompts:{facebook:['Visual concepts for next 5 posts','Facebook ad creative ideas','Cover photo concepts'],instagram:['Instagram grid direction','Reel visual concepts','Story template ideas'],linkedin:['LinkedIn visual ideas','Infographic concepts','Banner redesign ideas'],youtube:['YouTube thumbnail concepts','Channel art direction','Intro/outro ideas'],tiktok:['TikTok video concepts','On-screen effects ideas','Series visual format'],twitter:['Twitter header ideas','Tweet card graphic concepts','Visual thread ideas']},
+   sys:(pl,b,imp)=>`You are a Creative Director specialising in ${pl.l} visual strategy.\nBRAND: "${b.name}" — ${b.desc}\nAUDIENCE: ${b.audience} | TONE: ${b.tone}\nDescribe visual content in vivid specific detail. For each concept: what to show (composition/mood/colors/style), text overlays, why it stops the scroll, which free tool to use (Canva/CapCut) and exactly how. Be a director, not a suggester.`},
+  {id:'analyst',name:'Performance Analyst',e:'📊',c:'#00e5a0',d:'Performance reviews & self-improvement loop',
+   prompts:{facebook:['Review my Facebook stats','What metrics matter most','Diagnose my low reach'],instagram:['Review my Instagram insights','Why is my engagement dropping','What content gets saves'],linkedin:['Review my LinkedIn analytics','Improve my impressions','What\'s underperforming'],youtube:['Review my YouTube analytics','Why is watch time low','What makes people click'],tiktok:['Review my TikTok performance','Why aren\'t videos completing','What hooks work'],twitter:['Review my X analytics','Why is engagement low','What tweets outperform']},
+   sys:(pl,b,imp)=>`You are a ${pl.l} Performance Analyst — data-obsessed, blunt, improvement-focused.\nBRAND: "${b.name}" — ${b.desc}\nAUDIENCE: ${b.audience} | TONE: ${b.tone} | GOAL: ${b.goal}\nWhen user shares stats: 1) Diagnose what's working/not specifically 2) Give 3-5 prioritised recommendations 3) What to DO MORE vs STOP immediately.\nAlways end with EXACTLY:\n\n🧠 KEY LEARNINGS FOR NEXT MONTH:\n• [Learning 1]\n• [Learning 2]\n• [Learning 3]\n\nMake learnings sharp and brand-specific. They feed into all future content.`}
+];
+
+// SCREEN MANAGEMENT
+let cur='sl';
+function show(id){
+  const p=document.getElementById(cur);
+  p.classList.add('exit');
+  setTimeout(()=>p.classList.remove('active','exit'),280);
+  setTimeout(()=>{document.getElementById(id).classList.add('active');cur=id;},200);
+}
+
+// STEP 1
+async function go(){
+  const api=document.getElementById('akey').value.trim();
+  if(!api){alert('Please enter your Gemini API key');return;}
+  S.api=api;
+  S.links.ig=document.getElementById('ig').value.trim();
+  S.links.fb=document.getElementById('fb').value.trim();
+  S.links.li=document.getElementById('li').value.trim();
+  S.links.tt=document.getElementById('tt').value.trim();
+  S.links.yt=document.getElementById('yt').value.trim();
+  show('sa');
+  await runAnalysis();
+}
+
+async function runAnalysis(){
+  for(let i=1;i<=5;i++){
+    await wait(550+i*380);
+    if(i>1)document.getElementById(`as${i-1}`).classList.remove('active');
+    document.getElementById(`as${i}`).classList.add('active');
+  }
+  await wait(400);
+  for(let i=1;i<=5;i++){document.getElementById(`as${i}`).classList.remove('active');document.getElementById(`as${i}`).classList.add('done');}
+  const linksText=Object.entries(S.links).filter(([,v])=>v).map(([k,v])=>`${k}: ${v}`).join('\n')||'No links provided';
+  try{
+    const res=await callGemini('You are a brand intelligence JSON generator. Output ONLY valid JSON, no markdown.',
+      [{role:'user',content:`Analyze these social media profile URLs and infer as much as possible about this brand.\n\nSocial links:\n${linksText}\n\nRespond ONLY with valid JSON:\n{"brandName":"inferred name from URL handles","description":"1-2 sentence description of what they likely do","audience":"likely target audience","tone":"one of: warm and friendly/professional and authoritative/fun and playful/bold and aspirational/luxury and premium/casual and conversational/educational and informative/bold and edgy","goal":"one of: grow brand awareness/drive sales and conversions/build a community/generate leads/establish thought leadership/promote events","bestPlatform":"which platform seems strongest for them","opportunity":"single biggest content opportunity in 8 words or less"}`}]);
+    const parsed=JSON.parse(res.replace(/```json|```/g,'').trim());
+    Object.assign(S.brand,{name:parsed.brandName||'',desc:parsed.description||'',audience:parsed.audience||'',tone:parsed.tone||'bold and aspirational',goal:parsed.goal||'grow brand awareness',bestPlatform:parsed.bestPlatform||'Instagram',opportunity:parsed.opportunity||'Short-form authority content'});
+  }catch(e){Object.assign(S.brand,{name:'',desc:'',audience:'',tone:'bold and aspirational',goal:'grow brand awareness',bestPlatform:'Instagram',opportunity:'Short-form authority content'});}
+  await wait(500);
+  fillConfirm();
+  show('sc');
+}
+
+function fillConfirm(){
+  document.getElementById('cn').value=S.brand.name;
+  document.getElementById('cd').value=S.brand.desc;
+  document.getElementById('ca').value=S.brand.audience;
+  document.getElementById('ct').value=S.brand.tone;
+  document.getElementById('cg').value=S.brand.goal;
+  document.getElementById('igrid').innerHTML=[
+    {k:'Detected Tone',v:cap(S.brand.tone)},
+    {k:'Target Audience',v:S.brand.audience||'To confirm'},
+    {k:'Strongest Platform',v:S.brand.bestPlatform},
+    {k:'Top Opportunity',v:S.brand.opportunity},
+  ].map(i=>`<div class="iblock"><div class="ik">${i.k}</div><div class="iv">${i.v}</div></div>`).join('');
+}
+
+// STEP 3: LAUNCH
+function launch(){
+  S.brand.name=document.getElementById('cn').value.trim()||'My Brand';
+  S.brand.desc=document.getElementById('cd').value.trim();
+  S.brand.audience=document.getElementById('ca').value.trim();
+  S.brand.tone=document.getElementById('ct').value;
+  S.brand.goal=document.getElementById('cg').value;
+  if(!S.brand.name){alert('Please enter your brand name');return;}
+  const provided=Object.entries(S.links).filter(([,v])=>v).map(([k])=>k);
+  Object.keys(P).forEach(p=>{S.health[p]=provided.includes(p)?(Math.random()>.5?'strong':'opp'):'weak';});
+  buildDash();
+  show('sm');
+}
+
+// DASHBOARD
+function buildDash(){
+  document.getElementById('tbrand').textContent=S.brand.name;
+  renderIntel();renderRail();renderSpecs();renderImp();renderVPreview();
+}
+
+function renderIntel(){
+  document.getElementById('igridm').innerHTML=[
+    {k:'Tone',v:cap(S.brand.tone)},
+    {k:'Audience',v:S.brand.audience||'—'},
+    {k:'Best Platform',v:S.brand.bestPlatform||'Instagram'},
+    {k:'Top Opportunity',v:S.brand.opportunity||'Short-form content'},
+  ].map(i=>`<div class="ii"><div class="iik">${i.k}</div><div class="iiv">${i.v}</div></div>`).join('');
+}
+
+function renderRail(){
+  document.getElementById('prail').innerHTML=Object.entries(P).map(([key,pl])=>`
+    <div class="ptab${key===S.platform?' active':''}" style="--pc:${pl.c};--pg:${pl.g}" onclick="selPlat('${key}',this)">
+      <div class="ptab-icon">${pl.i}</div>
+      <div class="ptab-name">${pl.l}</div>
+      <div class="health ${S.health[key]||'weak'}"></div>
+    </div>`).join('');
+}
+
+function selPlat(key,el){
+  S.platform=key;
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  if(el){el.classList.add('active');el.style.setProperty('--pc',P[key].c);el.style.setProperty('--pg',P[key].g);}
+  document.getElementById('slabel').textContent=`${P[key].l.toUpperCase()} — YOUR AI TEAM`;
+  renderSpecs();renderImp();
+}
+
+function renderSpecs(){
+  document.getElementById('specgrid').innerHTML=SPECS.map(s=>`
+    <div class="scard" style="--pc:${s.c}" onclick="openChat('${s.id}')">
+      <span class="semoji">${s.e}</span>
+      <div class="sname">${s.name}</div>
+      <div class="sdesc">${s.d}</div>
+      <div class="sarr">↗</div>
+    </div>`).join('');
+}
+
+function renderImp(){
+  const p=S.platform,list=S.improvements[p],panel=document.getElementById('imppanel');
+  if(!list?.length){panel.classList.add('hidden');return;}
+  panel.classList.remove('hidden');
+  document.getElementById('implist').innerHTML=list.map(i=>`<div class="impitem">• ${i}</div>`).join('');
+}
+
+function renderVPreview(){
+  const vp=document.getElementById('vpreview'),vl=document.getElementById('vpreviewlist'),b=document.getElementById('vcntbadge');
+  if(!S.vault.length){vp.classList.add('hidden');return;}
+  vp.classList.remove('hidden');b.textContent=S.vault.length;
+  vl.innerHTML=S.vault.slice(-3).reverse().map(v=>`<div class="vaultitem"><div class="vaultitem-title">${v.title}</div><div class="vaultitem-meta">${v.platform} · ${v.specialist} · ${v.date}</div></div>`).join('');
+}
+
+// CHAT
+function openChat(specId){
+  const spec=SPECS.find(s=>s.id===specId),pl=P[S.platform];
+  S.spec=spec;S.convo=[];
+  document.getElementById('chavatar').textContent=spec.e;
+  document.getElementById('chavatar').style.background=spec.c+'22';
+  document.getElementById('chname').textContent=spec.name;
+  document.getElementById('chsub').textContent=`${pl.l} · AI Specialist`;
+  document.getElementById('qrail').style.setProperty('--pc',spec.c);
+  document.getElementById('qrail').innerHTML=(spec.prompts[S.platform]||[]).map(p=>`<div class="qchip" style="--pc:${spec.c}" onclick="usePrompt('${esc(p)}')">${p}</div>`).join('');
+  document.getElementById('messages').innerHTML='';
+  const imp=S.improvements[S.platform],hasLinks=Object.values(S.links).some(v=>v);
+  let g=`I'm your ${pl.l} ${spec.name}, working exclusively for **${S.brand.name}**.\n\nI know your brand — ${S.brand.tone} tone, targeting ${S.brand.audience}, aiming to ${S.brand.goal}.`;
+  if(hasLinks)g+=`\n\nI've seen your social profiles. I'm not starting from scratch.`;
+  if(imp?.length)g+=`\n\n🧠 I've loaded ${imp.length} performance insights from your analytics reviews. My output will reflect what's already working for you.`;
+  g+=`\n\nWhat do you need from me?`;
+  addMsg('ai',g);
+  show('sch');
+  document.getElementById('uinput').focus();
+}
+
+function usePrompt(t){document.getElementById('uinput').value=t;send();}
+
+async function send(){
+  const inp=document.getElementById('uinput'),text=inp.value.trim();
+  if(!text)return;
+  inp.value='';ar(inp);
+  addMsg('user',text);
+  S.convo.push({role:'user',content:text});
+  document.getElementById('sbtn').disabled=true;
+  const sk=addSkel();
+  try{
+    const imp=S.improvements[S.platform];
+    const reply=await callGemini(S.spec.sys(P[S.platform],S.brand,imp),S.convo);
+    sk.remove();addMsg('ai',reply,true);
+    S.convo.push({role:'model',content:reply});
+    if(S.spec.id==='analyst'&&reply.includes('KEY LEARNINGS'))extractL(reply);
+  }catch(e){sk.remove();addMsg('ai',`⚠️ ${e.message}\n\nCheck your API key in ⚙️ Settings`);}
+  document.getElementById('sbtn').disabled=false;
+}
+
+function extractL(text){
+  const p=S.platform;
+  if(!S.improvements[p])S.improvements[p]=[];
+  let cap=false;
+  text.split('\n').forEach(line=>{
+    if(line.includes('KEY LEARNINGS')){cap=true;return;}
+    if(cap){const c=line.replace(/^[•\-\*\d\.]\s*/,'').trim();if(c.length>8&&!S.improvements[p].includes(c))S.improvements[p].push(c);}
+  });
+  renderImp();
+}
+
+// GEMINI
+async function callGemini(sys,convo){
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${S.api}`;
+  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system_instruction:{parts:[{text:sys}]},contents:convo.map(m=>({role:m.role,parts:[{text:m.content}]})),generationConfig:{temperature:.82,maxOutputTokens:1600}})});
+  if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API error ${res.status}`);}
+  const d=await res.json();
+  return d.candidates?.[0]?.content?.parts?.[0]?.text||'No response received.';
+}
+
+// MESSAGES
+function addMsg(role,text,actions=false){
+  const msgs=document.getElementById('messages'),div=document.createElement('div');
+  div.className=`msg ${role}`;
+  const fmt=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/`([^`]+)`/g,'<code style="background:#ffffff0e;padding:1px 5px;border-radius:4px;font-size:.84em">$1</code>').replace(/\n/g,'<br>');
+  let html=`<div class="mbubble">${fmt}</div>`;
+  if(actions&&role==='ai'){
+    html+=`<div class="actrow">
+      <button class="actbtn" onclick="cp(this,'${esc(text)}')">📋 Copy</button>
+      <button class="actbtn" onclick="regen()">🔁 Improve</button>
+      <button class="actbtn" onclick="bolder()">🎯 Make Bolder</button>
+      <button class="actbtn" onclick="sales()">📈 Optimise for Sales</button>
+      <button class="actbtn" onclick="sv('${esc(text)}')">💾 Save</button>
+    </div>`;
+  }
+  div.innerHTML=html;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;return div;
+}
+
+function addSkel(){
+  const msgs=document.getElementById('messages'),div=document.createElement('div');
+  div.className='msg ai';
+  div.innerHTML=`<div class="skelbubble"><div class="skelline" style="width:88%"></div><div class="skelline" style="width:72%"></div><div class="skelline"></div></div>`;
+  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;return div;
+}
+
+function regen(){
+  const lu=[...S.convo].reverse().find(m=>m.role==='user');
+  if(!lu)return;
+  S.convo=S.convo.slice(0,-1);
+  S.convo.push({role:'user',content:lu.content+'\n\nImprove your previous response — sharper, more specific, more actionable.'});
+  addMsg('user','🔁 Improve this');send();
+}
+function bolder(){S.convo.push({role:'user',content:'Rewrite bolder — more direct, more confident, cut all hedging language.'});addMsg('user','🎯 Make it bolder');send();}
+function sales(){S.convo.push({role:'user',content:'Rewrite optimised for conversions and sales — add urgency, social proof hooks, stronger CTAs.'});addMsg('user','📈 Optimise for sales');send();}
+
+function sv(text){
+  S.vault.push({id:Date.now().toString(),title:`${S.spec.name} · ${P[S.platform].l}`,platform:P[S.platform].l,specialist:S.spec.name,content:text,date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})});
+  renderVPreview();toast('💾 Saved to Strategy Vault');
+}
+
+function toast(msg){
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),3200);
+}
+
+// VAULT
+function openVault(){
+  const list=document.getElementById('vmodallist');
+  if(!S.vault.length){list.innerHTML='<div class="vempty">No saved strategies yet.<br>Tap 💾 Save after any AI response.</div>';}
+  else{list.innerHTML=S.vault.slice().reverse().map(v=>`<div class="ventry"><div class="ventry-title"><span>${v.title}</span><span style="color:var(--dim);font-weight:400;font-size:.68rem">${v.date}</span></div><div class="ventry-preview">${v.content.replace(/<[^>]+>/g,'')}</div><div style="display:flex;gap:7px;margin-top:9px"><button class="actbtn" onclick="cp(this,'${esc(v.content)}')">📋 Copy</button><button class="actbtn" style="color:var(--coral)" onclick="dv('${v.id}')">🗑 Delete</button></div></div>`).join('');}
+  document.getElementById('vmodal').classList.add('open');
+}
+function closeVault(){document.getElementById('vmodal').classList.remove('open');}
+function cvo(e){if(e.target.id==='vmodal')closeVault();}
+function dv(id){S.vault=S.vault.filter(v=>v.id!==id);renderVPreview();openVault();}
+
+// SETTINGS
+function openSettings(){
+  document.getElementById('ss-api').value=S.api;
+  document.getElementById('ss-name').value=S.brand.name;
+  document.getElementById('ss-desc').value=S.brand.desc;
+  document.getElementById('ss-aud').value=S.brand.audience;
+  document.getElementById('ss-tone').value=S.brand.tone;
+  document.getElementById('ss-goal').value=S.brand.goal;
+  document.getElementById('ssheet').classList.add('open');
+}
+function closeSettings(){document.getElementById('ssheet').classList.remove('open');}
+function cso(e){if(e.target.id==='ssheet')closeSettings();}
+function saveS(){
+  S.api=document.getElementById('ss-api').value.trim()||S.api;
+  S.brand.name=document.getElementById('ss-name').value.trim()||S.brand.name;
+  S.brand.desc=document.getElementById('ss-desc').value.trim();
+  S.brand.audience=document.getElementById('ss-aud').value.trim();
+  S.brand.tone=document.getElementById('ss-tone').value;
+  S.brand.goal=document.getElementById('ss-goal').value;
+  document.getElementById('tbrand').textContent=S.brand.name;
+  renderIntel();closeSettings();toast('✓ Settings saved');
+}
+
+// NAV
+function goBack(){show('sm');}
+function hkey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
+function ar(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,108)+'px';}
+function cp(btn,text){navigator.clipboard.writeText(text.replace(/<[^>]+>/g,'')).then(()=>{const o=btn.textContent;btn.textContent='✅ Copied!';setTimeout(()=>btn.textContent=o,2000);});}
+function esc(s){return(s||'').replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$/g,'\\$').replace(/'/g,"\\'")}
+function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s}
+function wait(ms){return new Promise(r=>setTimeout(r,ms))}
+</script>
+</body>
+</html>
